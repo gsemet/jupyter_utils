@@ -1,5 +1,7 @@
 CHANGES
 =======
 
+* add badges to README
+* conda package auto install
 * Project bootstrap using my python-library-cookiecutter
 * Initial commit

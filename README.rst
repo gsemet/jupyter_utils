@@ -2,6 +2,12 @@
 jupyter_utils
 ===============================
 
+.. image:: https://travis-ci.org/Stibbons/jupyter_utils.svg?branch=master
+    :target: https://travis-ci.org/Stibbons/jupyter_utils
+.. image:: https://travis-ci.org/stibbons/jupyter_utils.svg?branch=master
+    :target: https://travis-ci.org/stibbons/jupyter_utils
+
+
 A set of Python utility methods to ease usage of Jupyter notebook
 
 * Free software: MIT
