@@ -2,6 +2,12 @@
 jupyter_utils
 ===============================
 
+.. image:: https://travis-ci.org/Stibbons/jupyter_utils.svg?branch=master
+    :target: https://travis-ci.org/Stibbons/jupyter_utils
+.. image:: https://badge.fury.io/py/jupyter_utils.svg
+    :target: https://pypi.python.org/pypi/jupyter_utils/
+    :alt: Pypi package
+
 A set of Python utility methods to ease usage of Jupyter notebook
 
 * Free software: MIT
