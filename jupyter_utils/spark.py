@@ -1,26 +1,28 @@
+# -*- coding: utf-8 -*-
 ###
-## Adapted from https://github.com/databricks/spark-sklearn/blob/master/python/spark_sklearn/grid_search.py
+# Adapted from
+# https://github.com/databricks/spark-sklearn/blob/master/python/spark_sklearn/grid_search.py
+###
 
 """
-Class for parallelizing GridSearchCV jobs in scikit-learn
+Class for parallelizing Scikit-Learn GridSearchCV in a Apache Spark cluster.
 """
 
-from collections import Sized
 import numpy as np
 
-from sklearn.base import BaseEstimator, is_classifier, clone
-from sklearn.cross_validation import KFold, check_cv, _fit_and_score, _safe_split
-from sklearn.grid_search import BaseSearchCV, _check_param_grid, ParameterGrid, _CVScoreTuple
+from collections import Sized
+
+from sklearn.base import clone
+from sklearn.base import is_classifier
+from sklearn.cross_validation import _fit_and_score
+from sklearn.cross_validation import check_cv
+from sklearn.grid_search import BaseSearchCV
+from sklearn.grid_search import ParameterGrid
+from sklearn.grid_search import _CVScoreTuple
+from sklearn.grid_search import _check_param_grid
 from sklearn.metrics.scorer import check_scoring
-from sklearn.utils.validation import _num_samples, indexable
-
-try:
-    # 0.18
-    from sklearn.model_selection import GridSearchCV  # Perforing grid search
-except:
-    # 0.17
-    from sklearn.grid_search import GridSearchCV  # Perforing grid search
-
+from sklearn.utils.validation import _num_samples
+from sklearn.utils.validation import indexable
 
 
 class SparkGridSearchCV(BaseSearchCV):
@@ -30,31 +32,40 @@ class SparkGridSearchCV(BaseSearchCV):
     SparkGridSearchCV implements a "fit" method and a "predict" method like
     any classifier except that the parameters of the classifier
     used to predict is optimized by cross-validation.
+
     Parameters
     ----------
     sc: the spark context
+
     estimator : object type that implements the "fit" and "predict" methods
         A object of that type is instantiated for each grid point.
+
     param_grid : dict or list of dictionaries
         Dictionary with parameters names (string) as keys and lists of
         parameter settings to try as values, or a list of such
         dictionaries, in which case the grids spanned by each dictionary
         in the list are explored. This enables searching over any sequence
         of parameter settings.
+
     scoring : string, callable or None, optional, default: None
         A string (see model evaluation documentation) or
         a scorer callable object / function with signature
         ``scorer(estimator, X, y)``.
+
     fit_params : dict, optional
         Parameters to pass to the fit method.
+
     n_jobs : int, default 1
         This parameter is not used and kept for compatibility.
+
     pre_dispatch : int, or string, optional
         This parameter is not used and kept for compatibility.
+
     iid : boolean, default=True
         If True, the data is assumed to be identically distributed across
         the folds, and the loss minimized is the total loss per sample,
         and not the mean loss across the folds.
+
     cv : integer or cross-validation generator, default=3
         A cross-validation generator to use. If int, determines
         the number of folds in StratifiedKFold if estimator is a classifier
@@ -62,25 +73,28 @@ class SparkGridSearchCV(BaseSearchCV):
         of folds in KFold otherwise.
         Specific cross-validation objects can be passed, see
         sklearn.cross_validation module for the list of possible objects.
+
     refit : boolean, default=True
         Refit the best estimator with the entire dataset.
         If "False", it is impossible to make predictions using
         this SparkGridSearchCV instance after fitting.
         The refitting step, if any, happens on the local machine.
+
     verbose : integer
         Controls the verbosity: the higher, the more messages.
+
     error_score : 'raise' (default) or numeric
         Value to assign to the score if an error occurs in estimator fitting.
         If set to 'raise', the error is raised. If a numeric value is given,
         FitFailedWarning is raised. This parameter does not affect the refit
         step, which will always raise the error.
+
     Examples
     --------
     >>> from sklearn import svm, datasets
-    >>> from spark_sklearn import SparkGridSearchCV
+    >>> from jupyter_utils.spark import SparkGridSearchCV
     >>> from pyspark.sql import SparkSession
-    >>> from spark_sklearn.util import createLocalSparkSession
-    >>> spark = createLocalSparkSession()
+    >>> spark = ...
     >>> iris = datasets.load_iris()
     >>> parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
     >>> svr = svm.SVC()
@@ -97,6 +111,7 @@ class SparkGridSearchCV(BaseSearchCV):
            param_grid=..., pre_dispatch=..., refit=...,
            scoring=..., verbose=...)
     >>> spark.stop(); SparkSession._instantiatedContext = None
+
     Attributes
     ----------
     grid_scores_ : list of named tuples
@@ -107,30 +122,38 @@ class SparkGridSearchCV(BaseSearchCV):
             * ``mean_validation_score``, the mean score over the
               cross-validation folds
             * ``cv_validation_scores``, the list of scores for each fold
+
     best_estimator_ : estimator
         Estimator that was chosen by the search, i.e. estimator
         which gave highest score (or smallest loss if specified)
         on the left out data. Not available if refit=False.
+
     best_score_ : float
         Score of best_estimator on the left out data.
+
     best_params_ : dict
         Parameter setting that gave the best results on the hold out data.
+
     scorer_ : function
         Scorer function used on the held out data to choose the best
         parameters for the model.
+
     Notes
     ------
     The parameters selected are those that maximize the score of the left out
     data, unless an explicit score is passed in which case it is used instead.
     The parameters n_jobs and pre_dispatch are accepted but not used.
+
     See Also
     ---------
     :class:`ParameterGrid`:
         generates all the combinations of a an hyperparameter grid.
+
     :func:`sklearn.cross_validation.train_test_split`:
         utility function to split the data into a development set usable
-        for fitting a GridSearchCV instance and an evaluation set for
+        for fitting a SparkGridSearchCV instance and an evaluation set for
         its final evaluation.
+
     :func:`sklearn.metrics.make_scorer`:
         Make a scorer from a performance metric or loss function.
     """
@@ -207,8 +230,8 @@ class SparkGridSearchCV(BaseSearchCV):
             local_X = X_bc.value
             local_y = y_bc.value
             res = fas(local_estimator, local_X, local_y, scorer, train, test, verbose,
-                                  parameters, fit_params,
-                                  return_parameters=True, error_score=error_score)
+                      parameters, fit_params,
+                      return_parameters=True, error_score=error_score)
             return (index, res)
         indexed_out0 = dict(par_param_grid.map(fun).collect())
         out = [indexed_out0[idx] for idx in range(len(param_grid))]
