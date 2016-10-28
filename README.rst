@@ -78,11 +78,13 @@ Setup for development and unit tests:
 Execute unit tests:
 
 .. code-block:: bash
+
     $ python setup.py test
 
 Code Style:
 
 .. code-block:: bash
+
     $ python setup.py flake8
     $ yapf -r -i jupyter_utils
 
