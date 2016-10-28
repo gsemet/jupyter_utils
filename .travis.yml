@@ -27,10 +27,7 @@ script:
 # travis_pypi_setup.py script to finish PyPI deployment setup
 deploy:
   provider: pypi
-  true:
-    condition: $TOXENV == py27
-    repo: Stibbons/jupyter_utils
-    tags: true
+  user: stibbons
   password:
     secure: !!binary |
       YVNNZmRaMlp2dUNVS2p1SjhyN3hheGZERDAxVXF0OHZjaU5pdjg0NDBYclQyQllnbENqVlo3UE1y
@@ -45,6 +42,8 @@ deploy:
       NWdMaWlsL3FrQUpuUXdnTDJ3YjFaMkNqcStpWWZzeTdpMEt6eU5ZS0hYa1AxSXdBRFV1TUNlQjAz
       WmtoZXFNMFVjSkVlaFR3K0VDcU9HZGQ1N3ZLWlVUdmU4ZDlkSDIwUmljRUJOM2xSb0dyamVreU1Z
       YmUzdTRUSVA0eEcxVmtiWmtibjVWQU81cXVKQllNUklrWlN3U0RhYVdtamlucjdMdnQ1U09FQ1U9
-  user: stibbons
-  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: Stibbons/jupyter_utils
 
