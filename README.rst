@@ -11,16 +11,33 @@ jupyter_utils
 A set of Python utility methods to ease usage of Jupyter notebook
 
 * Free software: MIT
-* Documentation: jupyter_utils.readthedocs.org/en/latest/
 * Source: https://github.com/Stibbons/jupyter_utils
-
-Features
---------
-
-* TODO
 
 Usage
 -----
+
+Install `jupyter_utils` in Anaconda:
+
+.. code-block:: bash
+
+    $ source activate my_conda_env
+    $ pip install jupyter_utils
+
+From now, on every Jupyter notebook that use this conda environment, you can
+install any missing anaconda package directly from the cell:
+
+.. code-block:: python
+
+    from jupyter_utils import conda
+    conda.install("numpy")
+
+
+Note: only dependencies described in `requirements.txt` will be installed when
+using `pip install`. The development dependencies (pylint,...) and **not**
+installed on deployment.
+
+Contributing
+------------
 
 Create a virtualenv:
 

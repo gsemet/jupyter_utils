@@ -3,29 +3,48 @@
 
 language: python
 
-env:
-  - TOXENV=py35
-  - TOXENV=py34
-  - TOXENV=py27
+python:
+   - 3.5
+   - 3.4
+   - 2.7
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -U tox coveralls
+install:
+  - pip install -U pip
+  - pip install -U tox coveralls
+  - pip install -U -r requirements.txt
+  - pip install -U -r requirements-dev.txt
 
 # command to run tests, e.g. python setup.py test
-script: tox -e ${TOXENV}
+script:
+  - python setup.py flake8
+  # - tox -e ${TOXENV}
 
-after_success:
-  coveralls
+#after_success:
+#  coveralls
 
 # After you create the Github repo and add it to Travis, run the
 # travis_pypi_setup.py script to finish PyPI deployment setup
 deploy:
   provider: pypi
-  distributions: sdist bdist_wheel
-  user: stibbons
-  password:
-    secure: PLEASE_REPLACE_ME
-  on:
-    tags: true
-    repo: Stibbons/jupyter_utils
+  true:
     condition: $TOXENV == py27
+    repo: Stibbons/jupyter_utils
+    tags: true
+  password:
+    secure: !!binary |
+      YVNNZmRaMlp2dUNVS2p1SjhyN3hheGZERDAxVXF0OHZjaU5pdjg0NDBYclQyQllnbENqVlo3UE1y
+      cHVERGVTVGN5cjNhdE1zaFRqK0FjRnRseHhuWjFCS2I4U2ZTTmFoSHBVcmtzbEtLUnltd0w0Z01z
+      OTF2M2NxSXBOR1lWQ1kvTmJzTlk2b0JIaEUzRDkyNGV1eTV4bG9RcEdWeFNFTEdqOC96c3ZCMWx0
+      RE0waHRKaHZYa3lRMnZZRXFVcDVtbmdXWXduckpGU1lZQzBrWXd6eDZtTHV5azl4RVA1R0pRY0FF
+      aFNUcWVDOVF6K2Jodkw2QlJldlBOTmxMcHRQcWZHNU5tQTc4RGxEVVBGZXhKcVJ6c1hxUC9NTC90
+      eVNobzVaTGczN0g2dXFmZ1JvWlh0L3EvZGFNTC9nZW1nVm9FMGJORUhxbFVXd0Z5ZE9IRzNPTGxa
+      NzlFcE1oeGoxYjYwVFcxUzdSUlJwMmtNRmJ5RDAzVHZsWFBlQ2lYWVNSTGZNK1pjODNJWmJiQ1Iy
+      OHJLUlJweGJwV2NlZThsbkYyODdmL3VNbUVoTk5URkQrR2dsd3h2MVhNK0gxTEJhTUNQOXBpVVQz
+      a1lnbXBnYjVFc1ZORzQvYzd1cjJqQWtORFRhOGVBSXhHNGlnNzhYU3Mvdi9XSTM5TUNKeEZaakgz
+      NWdMaWlsL3FrQUpuUXdnTDJ3YjFaMkNqcStpWWZzeTdpMEt6eU5ZS0hYa1AxSXdBRFV1TUNlQjAz
+      WmtoZXFNMFVjSkVlaFR3K0VDcU9HZGQ1N3ZLWlVUdmU4ZDlkSDIwUmljRUJOM2xSb0dyamVreU1Z
+      YmUzdTRUSVA0eEcxVmtiWmtibjVWQU81cXVKQllNUklrWlN3U0RhYVdtamlucjdMdnQ1U09FQ1U9
+  user: stibbons
+  distributions: sdist bdist_wheel
+

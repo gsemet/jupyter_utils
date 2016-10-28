@@ -7,11 +7,8 @@ test_jupyter_utils
 Tests for `jupyter_utils` module.
 """
 
-
 import sys
 import unittest
-from jupyter_utils import jupyter_utils
-
 
 
 class TestJupyter_utils(unittest.TestCase):
