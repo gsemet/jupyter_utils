@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = jupyter_utils
+
+[report]
+ignore_errors = True
