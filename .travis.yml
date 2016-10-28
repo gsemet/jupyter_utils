@@ -28,6 +28,7 @@ script:
 deploy:
   provider: pypi
   user: stibbons
+  distributions: sdist bdist_wheel
   password:
     secure: !!binary |
       YVNNZmRaMlp2dUNVS2p1SjhyN3hheGZERDAxVXF0OHZjaU5pdjg0NDBYclQyQllnbENqVlo3UE1y
@@ -44,6 +45,4 @@ deploy:
       YmUzdTRUSVA0eEcxVmtiWmtibjVWQU81cXVKQllNUklrWlN3U0RhYVdtamlucjdMdnQ1U09FQ1U9
   on:
     tags: true
-    distributions: sdist bdist_wheel
     repo: Stibbons/jupyter_utils
-
