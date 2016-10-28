@@ -68,26 +68,29 @@ Setup for production:
 
     $ pip install -r requirements.txt .
 
-Setup for development and unit tests
+Setup for development and unit tests:
 
 .. code-block:: bash
 
     $ pip install -r requirements.txt -r requirements-dev.txt -e .
+    $ python setup.py develop
 
-Build source package:
+Execute unit tests:
+
+.. code-block:: bash
+    $ python setup.py test
+
+Code Style:
+
+.. code-block:: bash
+    $ python setup.py flake8
+    $ yapf -r -i jupyter_utils
+
+Build:
 
 .. code-block:: bash
 
-    python setup.py sdist
-
-Build binary package:
-
-.. code-block:: bash
-
-    python setup.py bdist
-
-Build Wheel package:
-
-.. code-block:: bash
-
-    python setup.py bdist_wheel
+    $ # Source package
+    $ python setup.py sdist
+    $ # Binary package:
+    $ python setup.py bdist bdist_wheel

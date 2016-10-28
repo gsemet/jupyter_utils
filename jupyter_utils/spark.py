@@ -3,7 +3,6 @@
 # Adapted from
 # https://github.com/databricks/spark-sklearn/blob/master/python/spark_sklearn/grid_search.py
 ###
-
 """
 Class for parallelizing Scikit-Learn GridSearchCV in a Apache Spark cluster.
 """
@@ -158,12 +157,21 @@ class SparkGridSearchCV(BaseSearchCV):
         Make a scorer from a performance metric or loss function.
     """
 
-    def __init__(self, sc, estimator, param_grid, scoring=None, fit_params=None,
-                 n_jobs=1, iid=True, refit=True, cv=None, verbose=0,
-                 pre_dispatch='2*n_jobs', error_score='raise'):
-        super(SparkGridSearchCV, self).__init__(
-            estimator, scoring, fit_params, n_jobs, iid,
-            refit, cv, verbose, pre_dispatch, error_score)
+    def __init__(self,
+                 sc,
+                 estimator,
+                 param_grid,
+                 scoring=None,
+                 fit_params=None,
+                 n_jobs=1,
+                 iid=True,
+                 refit=True,
+                 cv=None,
+                 verbose=0,
+                 pre_dispatch='2*n_jobs',
+                 error_score='raise'):
+        super(SparkGridSearchCV, self).__init__(estimator, scoring, fit_params, n_jobs, iid, refit,
+                                                cv, verbose, pre_dispatch, error_score)
         self.sc = sc
         self.param_grid = param_grid
         self.grid_scores_ = None
@@ -195,22 +203,19 @@ class SparkGridSearchCV(BaseSearchCV):
         if y is not None:
             if len(y) != n_samples:
                 raise ValueError('Target variable (y) has a different number '
-                                 'of samples (%i) than data (X: %i samples)'
-                                 % (len(y), n_samples))
+                                 'of samples (%i) than data (X: %i samples)' % (len(y), n_samples))
         cv = check_cv(cv, X, y, classifier=is_classifier(estimator))
 
         if self.verbose > 0:
             if isinstance(parameter_iterable, Sized):
                 n_candidates = len(parameter_iterable)
                 print("Fitting {0} folds for each of {1} candidates, totalling"
-                      " {2} fits".format(len(cv), n_candidates,
-                                         n_candidates * len(cv)))
+                      " {2} fits".format(len(cv), n_candidates, n_candidates * len(cv)))
 
         base_estimator = clone(self.estimator)
 
         param_grid = [(parameters, train, test)
-                      for parameters in parameter_iterable
-                      for (train, test) in cv]
+                      for parameters in parameter_iterable for (train, test) in cv]
         # Because the original python code expects a certain order for the elements, we need to
         # respect it.
         indexed_param_grid = list(zip(range(len(param_grid)), param_grid))
@@ -229,10 +234,19 @@ class SparkGridSearchCV(BaseSearchCV):
             local_estimator = clone(base_estimator)
             local_X = X_bc.value
             local_y = y_bc.value
-            res = fas(local_estimator, local_X, local_y, scorer, train, test, verbose,
-                      parameters, fit_params,
-                      return_parameters=True, error_score=error_score)
+            res = fas(local_estimator,
+                      local_X,
+                      local_y,
+                      scorer,
+                      train,
+                      test,
+                      verbose,
+                      parameters,
+                      fit_params,
+                      return_parameters=True,
+                      error_score=error_score)
             return (index, res)
+
         indexed_out0 = dict(par_param_grid.map(fun).collect())
         out = [indexed_out0[idx] for idx in range(len(param_grid))]
 
@@ -249,8 +263,8 @@ class SparkGridSearchCV(BaseSearchCV):
             n_test_samples = 0
             score = 0
             all_scores = []
-            for this_score, this_n_test_samples, _, parameters in \
-                    out[grid_start:grid_start + n_folds]:
+            for this_score, this_n_test_samples, _, parameters in out[grid_start:grid_start +
+                                                                      n_folds]:
                 all_scores.append(this_score)
                 if self.iid:
                     this_score *= this_n_test_samples
@@ -262,25 +276,20 @@ class SparkGridSearchCV(BaseSearchCV):
                 score /= float(n_folds)
             scores.append((score, parameters))
             # TODO: shall we also store the test_fold_sizes?
-            grid_scores.append(_CVScoreTuple(
-                parameters,
-                score,
-                np.array(all_scores)))
+            grid_scores.append(_CVScoreTuple(parameters, score, np.array(all_scores)))
         # Store the computed scores
         self.grid_scores_ = grid_scores
 
         # Find the best parameters by comparing on the mean validation score:
         # note that `sorted` is deterministic in the way it breaks ties
-        best = sorted(grid_scores, key=lambda x: x.mean_validation_score,
-                      reverse=True)[0]
+        best = sorted(grid_scores, key=lambda x: x.mean_validation_score, reverse=True)[0]
         self.best_params_ = best.parameters
         self.best_score_ = best.mean_validation_score
 
         if self.refit:
             # fit the best estimator using the entire dataset
             # clone first to work around broken estimators
-            best_estimator = clone(base_estimator).set_params(
-                **best.parameters)
+            best_estimator = clone(base_estimator).set_params(**best.parameters)
             if y is not None:
                 best_estimator.fit(X, y, **self.fit_params)
             else:

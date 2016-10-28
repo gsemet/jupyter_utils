@@ -32,10 +32,8 @@ def install(conda_package_list, channel=None, verbose=True):
         conda_package_list = [conda_package_list]
     kernel_name = os.environ['CONDA_DEFAULT_ENV'].rpartition("/")[2]
 
-    out = subprocess.check_output("conda install -n {}{}-y {}"
-                                  .format(kernel_name,
-                                          " " if not channel else " -c {} ".format(channel),
-                                          " ".join(conda_package_list))
-                                  .split(" ")).decode("utf-8")
+    channel_args = " " if not channel else " -c {} ".format(channel)
+    out = subprocess.check_output("conda install -n {}{}-y {}".format(
+        kernel_name, channel_args, " ".join(conda_package_list)).split(" ")).decode("utf-8")
     if verbose:
         print("{!s}".format(out))
