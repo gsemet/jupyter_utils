@@ -1,8 +1,7 @@
+cryptography==1.4
 flake8==3.0.4
 pycodestyle==2.0.0
 pyflakes==1.2.3
 pylint==1.6.4
-yapf>=0.13.2
-cryptography==1.4
 PyYAML==3.11
-
+yapf>=0.13.2
