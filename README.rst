@@ -72,7 +72,7 @@ Setup for development and unit tests:
 
 .. code-block:: bash
 
-    $ pip install -r requirements.txt -r requirements-dev.txt -e .
+    $ pip install --upgrade -r requirements.txt -r requirements-dev.txt -e .
     $ python setup.py develop
 
 Execute unit tests:
