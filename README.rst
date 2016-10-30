@@ -43,8 +43,13 @@ you need to specify the name of the kernel. To simply this, Jupyter Utils provid
     from jupyter_utils import conda
     conda.install("numpy")
 
-Grid Search CV on Apache Spark
-------------------------------
+Grid Search CV on Apache Spark 1.6
+----------------------------------
+
+Easily distribute Scikit-learn Cross Validation on a Spark Cluster. Only for Spark 1.6.x. For Spark
+2, use `Sparkit-Learn <https://github.com/lensacom/sparkit-learn>`_ or
+`Spark-SKLearn <https://github.com/databricks/spark-sklearn>`_.
+
 
 .. code-block:: python
 
