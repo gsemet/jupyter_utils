@@ -7,18 +7,39 @@
 Class for parallelizing Scikit-Learn GridSearchCV in a Apache Spark cluster.
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 
 from collections import Sized
 
+# Ignore unwanted warnings
+import warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+
 from sklearn.base import clone
 from sklearn.base import is_classifier
+#try:
+#    # Scikit-learn >= 0.18
+#    from sklearn.model_selection._validation import _fit_and_score
+#    from sklearn.model_selection._validation import check_cv
+#    from sklearn.model_selection._search import BaseSearchCV
+#    from sklearn.model_selection._search import ParameterGrid
+##    from sklearn.model_selection._search import _CVScoreTuple
+#    from sklearn.model_selection._search import _check_param_grid
+#    slversion = 18
+#except:
+    # Scikit-learn < 0.18
 from sklearn.cross_validation import _fit_and_score
 from sklearn.cross_validation import check_cv
 from sklearn.grid_search import BaseSearchCV
 from sklearn.grid_search import ParameterGrid
 from sklearn.grid_search import _CVScoreTuple
 from sklearn.grid_search import _check_param_grid
+slversion = 17
+
 from sklearn.metrics.scorer import check_scoring
 from sklearn.utils.validation import _num_samples
 from sklearn.utils.validation import indexable
@@ -173,8 +194,8 @@ class SparkGridSearchCV(BaseSearchCV):
         super(SparkGridSearchCV, self).__init__(estimator, scoring, fit_params, n_jobs, iid, refit,
                                                 cv, verbose, pre_dispatch, error_score)
         self.sc = sc
-        self.param_grid = param_grid
         self.grid_scores_ = None
+        self.param_grid = param_grid
         _check_param_grid(param_grid)
 
     def fit(self, X, y=None):
@@ -204,7 +225,12 @@ class SparkGridSearchCV(BaseSearchCV):
             if len(y) != n_samples:
                 raise ValueError('Target variable (y) has a different number '
                                  'of samples (%i) than data (X: %i samples)' % (len(y), n_samples))
-        cv = check_cv(cv, X, y, classifier=is_classifier(estimator))
+ 
+	if slversion == 18:
+            cv = check_cv(cv, y, classifier=is_classifier(estimator))
+            # cv is actually not the same generator
+        else:
+            cv = check_cv(cv, X, y, classifier=is_classifier(estimator))
 
         if self.verbose > 0:
             if isinstance(parameter_iterable, Sized):
