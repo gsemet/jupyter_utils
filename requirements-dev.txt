@@ -1,4 +1,4 @@
-cryptography==1.4
+cryptography==3.2
 flake8==3.0.4
 pycodestyle==2.0.0
 pyflakes==1.2.3
